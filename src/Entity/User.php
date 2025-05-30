@@ -101,7 +101,7 @@ class User implements \Symfony\Component\Security\Core\User\UserInterface
      */
     public function getUserIdentifier(): string
     {
-        return $this->id;
+        return $this->email;
     }
 
     public function getCreatedAt(): ?\DateTimeImmutable

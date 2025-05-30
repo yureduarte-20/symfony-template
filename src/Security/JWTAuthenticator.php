@@ -47,16 +47,16 @@ class JWTAuthenticator extends AbstractAuthenticator
         $token = $data[1];
         $hash = hash_hmac('sha256', $token, $_ENV['APP_SECRET']);
 
-        $userIdentifier = $this->userRepository->findUsersWithSpecificToken($hash)?->getId();
+        $userIdentifier = $this->userRepository->findUsersWithSpecificToken($hash)?->getEmail();
         if (!$userIdentifier) {
             throw new CustomUserMessageAuthenticationException('Invalid token');
         }
         return new Passport(new UserBadge(
             $userIdentifier,
-            fn($userIdentifier) => $this->userRepository->find($userIdentifier)
+            fn($userIdentifier) => $this->userRepository->findByEmail($userIdentifier)
         ), new CustomCredentials(
             function (string $credentials, UserInterface $user): bool {
-                $user = $this->userRepository->find($user->getUserIdentifier())->getId();
+                $user = $this->userRepository->findByEmail($user->getUserIdentifier())->getId();
                 $user2 = $this->userRepository->findUsersWithSpecificToken($credentials)->getId();
 
                 return $user === $user2;
